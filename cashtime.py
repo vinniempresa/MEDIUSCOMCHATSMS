@@ -36,7 +36,7 @@ class CashtimeAPI:
     def _send_pushcut_notification(self, payment_data: Dict[str, Any], cashtime_result: Dict[str, Any]) -> None:
         """Send notification to Pushcut webhook when transaction is created"""
         try:
-            pushcut_webhook_url = os.environ.get("PUSHCUT_WEBHOOK_URL", "https://api.pushcut.io/CwRJR0BYsyJYezzN-no_e/notifications/Sms")
+            pushcut_webhook_url = os.environ.get("PUSHCUT_WEBHOOK_URL", "https://api.pushcut.io/NiUWvkdg8_MMjxh6DOpez/notifications/Venda%20Pendente")
             
             # Preparar dados da notificação
             customer_name = payment_data.get('name', 'Cliente')
