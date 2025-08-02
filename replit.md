@@ -80,4 +80,4 @@ Preferred communication style: Simple, everyday language.
 
 - **August 02, 2025**: Updated Pushcut webhook URL to new "Venda Pendente" notification endpoint (`https://api.pushcut.io/NiUWvkdg8_MMjxh6DOpez/notifications/Venda%20Pendente`). Updated to R$ 126,62 value for first payment. This change applies to both MEDIUS PAG and Cashtime API integrations.
 
-- **August 02, 2025**: Implemented "ticket" terminology throughout the PIX payment system. Updated logs, notifications, and postback handling to use "ticket R$ 126,62" instead of generic payment terms. Pushcut notifications now display "Venda Pendente" with ticket value, transaction details include ticket description, and all system logs use consistent ticket terminology for better tracking and clarity.
+- **August 02, 2025**: Implemented "ticket" terminology throughout the PIX payment system. Updated logs, notifications, and postback handling to use "ticket R$ 126,62" instead of generic payment terms. Pushcut notifications now display "Nova Venda" with ticket value, transaction details include ticket description, and all system logs use consistent ticket terminology for better tracking and clarity.
