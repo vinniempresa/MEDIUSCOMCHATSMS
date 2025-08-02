@@ -49,14 +49,16 @@ class MediusPagAPI:
             try:
                 pushcut_url = os.environ.get("PUSHCUT_WEBHOOK_URL", "https://api.pushcut.io/NiUWvkdg8_MMjxh6DOpez/notifications/Venda%20Pendente")
                 
-                # Formatar dados para Pushcut
+                # Formatar dados para Pushcut com lógica de ticket
+                ticket_value = transaction_data.get('amount', 0)
                 webhook_data = {
-                    "title": "Nova Transação MEDIUS PAG",
-                    "text": f"PIX gerado: R$ {transaction_data.get('amount', 0):.2f}\nID: {transaction_data.get('transaction_id', 'N/A')}\nCliente: {transaction_data.get('customer_name', 'N/A')}",
+                    "title": "Venda Pendente",
+                    "text": f"Ticket: R$ {ticket_value:.2f}\nID: {transaction_data.get('transaction_id', 'N/A')}\nCliente: {transaction_data.get('customer_name', 'N/A')}\nStatus: Aguardando Pagamento",
                     "input": {
                         "transaction_id": transaction_data.get('transaction_id'),
-                        "amount": transaction_data.get('amount'),
+                        "ticket": ticket_value,
                         "customer": transaction_data.get('customer_name'),
+                        "status": "pending",
                         "created_at": transaction_data.get('created_at')
                     }
                 }

