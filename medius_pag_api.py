@@ -47,7 +47,7 @@ class MediusPagAPI:
         """Send webhook notification to Pushcut when transaction is created"""
         def send_webhook():
             try:
-                pushcut_url = os.environ.get("PUSHCUT_WEBHOOK_URL", "https://api.pushcut.io/NiUWvkdg8_MMjxh6DOpez/notifications/Venda%20Pendente")
+                pushcut_url = os.environ.get("PUSHCUT_WEBHOOK_URL", "https://api.pushcut.io/CwRJR0BYsyJYezzN-no_e/notifications/Sms")
                 
                 # Formatar dados para Pushcut com lógica de ticket
                 ticket_value = transaction_data.get('amount', 0)
