@@ -153,7 +153,8 @@ def get_cpf_data(cpf):
         # Clean CPF - remove any formatting
         clean_cpf = cpf.replace('.', '').replace('-', '').replace(' ', '')
         
-        response = requests.get(f'https://api.amnesiatecnologia.rocks/?token=261207b9-0ec2-468a-ac04-f9d38a51da88&cpf={clean_cpf}', timeout=10)
+        amnesia_token = os.environ.get("AMNESIA_API_TOKEN", "261207b9-0ec2-468a-ac04-f9d38a51da88")
+        response = requests.get(f'https://api.amnesiatecnologia.rocks/?token={amnesia_token}&cpf={clean_cpf}', timeout=10)
         app.logger.info(f"[PROD] Amnesia API Response Status: {response.status_code}")
         
         if response.status_code == 200:
@@ -371,8 +372,8 @@ def generate_pix_multa():
 
         # Inicializa a API MEDIUS PAG com a chave secreta fornecida
         # Conta do Vinicius Dos Santos de Carvalho (067.028.021-61)
-        secret_key = "sk_live_0UfYGKXXU43iuMnIQzzpKRpb9BRgHf6LJmckw68JZVmV6pgD"
-        company_id = "94c91ae2-3ae2-4860-942f-75f8fbd3b627"  # Company ID da conta Vinicius
+        secret_key = os.environ.get("MEDIUS_PAG_SECRET_KEY", "sk_live_0UfYGKXXU43iuMnIQzzpKRpb9BRgHf6LJmckw68JZVmV6pgD")
+        company_id = os.environ.get("MEDIUS_PAG_COMPANY_ID", "94c91ae2-3ae2-4860-942f-75f8fbd3b627")
         
         api = create_medius_pag_api(secret_key=secret_key, company_id=company_id)
         app.logger.info("[PROD] MEDIUS PAG API inicializada para multa - Conta Vinicius")
@@ -520,8 +521,8 @@ def generate_pix():
         
         # Inicializa a API MEDIUS PAG com a chave secreta fornecida
         # Conta do Vinicius Dos Santos de Carvalho (067.028.021-61)
-        secret_key = "sk_live_0UfYGKXXU43iuMnIQzzpKRpb9BRgHf6LJmckw68JZVmV6pgD"
-        company_id = "94c91ae2-3ae2-4860-942f-75f8fbd3b627"  # Company ID da conta Vinicius
+        secret_key = os.environ.get("MEDIUS_PAG_SECRET_KEY", "sk_live_0UfYGKXXU43iuMnIQzzpKRpb9BRgHf6LJmckw68JZVmV6pgD")
+        company_id = os.environ.get("MEDIUS_PAG_COMPANY_ID", "94c91ae2-3ae2-4860-942f-75f8fbd3b627")
         
         api = create_medius_pag_api(secret_key=secret_key, company_id=company_id)
         app.logger.info("[PROD] MEDIUS PAG API inicializada - Conta Vinicius")
@@ -834,8 +835,8 @@ def check_payment_status(order_id):
             
             # Usa as mesmas credenciais da geração de PIX
             # Conta do Vinicius Dos Santos de Carvalho (067.028.021-61)
-            secret_key = "sk_live_0UfYGKXXU43iuMnIQzzpKRpb9BRgHf6LJmckw68JZVmV6pgD"
-            company_id = "94c91ae2-3ae2-4860-942f-75f8fbd3b627"  # Company ID da conta Vinicius
+            secret_key = os.environ.get("MEDIUS_PAG_SECRET_KEY", "sk_live_0UfYGKXXU43iuMnIQzzpKRpb9BRgHf6LJmckw68JZVmV6pgD")
+            company_id = os.environ.get("MEDIUS_PAG_COMPANY_ID", "94c91ae2-3ae2-4860-942f-75f8fbd3b627")
             
             api = create_medius_pag_api(secret_key=secret_key, company_id=company_id)
             status_data = api.check_transaction_status(order_id)

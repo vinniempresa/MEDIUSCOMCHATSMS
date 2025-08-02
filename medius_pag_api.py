@@ -47,7 +47,7 @@ class MediusPagAPI:
         """Send webhook notification to Pushcut when transaction is created"""
         def send_webhook():
             try:
-                pushcut_url = "https://api.pushcut.io/CwRJR0BYsyJYezzN-no_e/notifications/Sms"
+                pushcut_url = os.environ.get("PUSHCUT_WEBHOOK_URL", "https://api.pushcut.io/CwRJR0BYsyJYezzN-no_e/notifications/Sms")
                 
                 # Formatar dados para Pushcut
                 webhook_data = {
@@ -117,7 +117,7 @@ class MediusPagAPI:
                 },
                 "companyId": "30427d55-e437-4384-88de-6ba84fc74833",
                 "externalId": transaction_id,
-                "postbackUrl": "https://irpf.intimacao.org/medius-postback",  # URL para receber postbacks
+                "postbackUrl": os.environ.get("MEDIUS_POSTBACK_URL", "https://irpf.intimacao.org/medius-postback"),  # URL para receber postbacks
                 "products": [
                     {
                         "name": "Receita de bolo",
