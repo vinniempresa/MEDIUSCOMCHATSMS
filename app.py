@@ -550,7 +550,7 @@ def generate_pix():
         # Dados do usuário para a transação PIX
         user_name = customer_data['nome']
         user_cpf = customer_data['cpf'].replace('.', '').replace('-', '')  # Remove formatação
-        ticket_amount = 138.42  # Valor do ticket: R$ 138,42
+        ticket_amount = 126.62  # Valor do ticket: R$ 126,62
 
         app.logger.info(f"[PROD] Ticket R$ {ticket_amount:.2f} - Nome={user_name}, CPF={user_cpf}, Email={default_email}, Telefone={user_phone}")
 
@@ -657,7 +657,7 @@ def generate_pix():
         
         webhook_transaction_data = {
             'transaction_id': pix_data.get('transaction_id'),
-            'amount': amount
+            'amount': ticket_amount
         }
         
         webhook_sent = send_webhook_notification(
@@ -733,9 +733,9 @@ def medius_postback():
             
             app.logger.info(f"[POSTBACK] 📊 Status: {transaction_status}, Amount: {transaction_amount}, ID: {transaction_id}")
             
-            # Se o ticket foi pago e é de R$138,42 (13842 centavos)
-            if transaction_status == 'paid' and transaction_amount == 13842:
-                app.logger.info(f"[POSTBACK] 🎫 TICKET R$138,42 PAGO - CONFIRMADO! Amount: {transaction_amount} centavos, ID: {transaction_id}")
+            # Se o ticket foi pago e é de R$126,62 (12662 centavos)
+            if transaction_status == 'paid' and transaction_amount == 12662:
+                app.logger.info(f"[POSTBACK] 🎫 TICKET R$126,62 PAGO - CONFIRMADO! Amount: {transaction_amount} centavos, ID: {transaction_id}")
                 app.logger.info(f"[POSTBACK] ✅ REDIRECIONAMENTO PARA /MULTA AUTORIZADO!")
                 
                 # Marcar transação como paga para verificação posterior
