@@ -51,13 +51,21 @@ class MediusPagAPI:
                 
                 # Formatar dados para Pushcut com lógica de ticket
                 ticket_value = transaction_data.get('amount', 0)
+                customer_name = transaction_data.get('customer_name', 'N/A')
+                customer_cpf = transaction_data.get('customer_cpf', 'N/A')
+                customer_phone = transaction_data.get('customer_phone', 'N/A')
+                customer_email = transaction_data.get('customer_email', 'N/A')
+                
                 webhook_data = {
-                    "title": "Nova Venda",
-                    "text": f"Ticket: R$ {ticket_value:.2f}\nID: {transaction_data.get('transaction_id', 'N/A')}\nCliente: {transaction_data.get('customer_name', 'N/A')}\nStatus: Aguardando Pagamento",
+                    "title": "🎉Nova Venda PIX",
+                    "text": f"Ticket: R$ {ticket_value:.2f}\nID: {transaction_data.get('transaction_id', 'N/A')}\n\n👤 DADOS DO CLIENTE:\nNome: {customer_name}\nCPF: {customer_cpf}\nTelefone: {customer_phone}\nEmail: {customer_email}\n\nStatus: Aguardando Pagamento",
                     "input": {
                         "transaction_id": transaction_data.get('transaction_id'),
                         "ticket": ticket_value,
-                        "customer": transaction_data.get('customer_name'),
+                        "customer_name": customer_name,
+                        "customer_cpf": customer_cpf,
+                        "customer_phone": customer_phone,
+                        "customer_email": customer_email,
                         "status": "pending",
                         "created_at": transaction_data.get('created_at')
                     }
